@@ -85,8 +85,8 @@ for url in linkne:
     os.chdir(f'{tenchap}')
 
     image = soup('div',class_="page-chapter")
-    with ThreadPoolExecutor(max_workers=100) as executor:
+    with ThreadPoolExecutor(max_workers=50) as executor:
         for i in image:
             [].append(executor.submit(taianh,i))
-    os.chdir(thumucgoc) # type: ignore
+    os.chdir(thumucgoc)
 
