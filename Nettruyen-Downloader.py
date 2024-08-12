@@ -89,4 +89,4 @@ for url in linkne:
         for i in image:
             [].append(executor.submit(taianh,i))
     os.chdir(thumucgoc)
-
+input("Đã hoàn thành")
