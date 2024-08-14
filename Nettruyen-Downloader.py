@@ -1,8 +1,6 @@
 import os
-try:
-    os.system('clear')
-except:
-    os.system('cls')
+os.system('cls')
+os.system('clear')
 banner =r"""
   _   _      _ _______                            _____                      _                 _           
  | \ | |    | |__   __|                          |  __ \                    | |               | |          
@@ -43,18 +41,41 @@ if os.path.exists('link.txt'):
 else:
     pass
 from concurrent.futures import ThreadPoolExecutor
-def taianh(i):
+def taianh(i,tentruyen):
     global anh
-    anh = i.img.get('data-src')
-    print(anh)
+    anh = i.img.get('data-sv1')
     tenanh = re.search(r'/nettruyen/(.*)', anh).group(1)
     tenanh = tenanh.replace('/', '_')
     if os.path.exists(f'{tenanh}'):
         pass
     else:
-        laylanh = requests.get(anh).content
-        with open(f'{tenanh}', 'wb') as handler:
-            handler.write(laylanh)
+        try:
+            headers = {
+                'accept': 'image/avif,image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8',
+                'accept-language': 'vi,en-US;q=0.9,en;q=0.8',
+                'priority': 'i',
+                'referer': 'https://nettruyenaa.com/',
+                'sec-ch-ua': '"Not)A;Brand";v="99", "Brave";v="127", "Chromium";v="127"',
+                'sec-ch-ua-mobile': '?0',
+                'sec-ch-ua-platform': '"Windows"',
+                'sec-fetch-dest': 'image',
+                'sec-fetch-mode': 'no-cors',
+                'sec-fetch-site': 'cross-site',
+                'sec-gpc': '1',
+                'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Safari/537.36',
+}
+
+            laylanh = requests.get(anh, headers=headers)
+            if laylanh.status_code == 200:
+                print(f'tải thành công {tenanh}')
+            else:
+                print(f'lỗi khi tải {tenanh}')
+                open(f'loi_{tentruyen}.txt', 'a').write(anh + '\n')
+
+            with open(f'{tenanh}', 'wb') as file:
+                file.write(laylanh.content)
+        except Exception as e:
+            print(e)
 
 linktruyen = input('Nhập link truyện: ')
 respones = requests.get(linktruyen)
@@ -85,8 +106,8 @@ for url in linkne:
     os.chdir(f'{tenchap}')
 
     image = soup('div',class_="page-chapter")
-    with ThreadPoolExecutor(max_workers=50) as executor:
+    with ThreadPoolExecutor(max_workers=10) as executor:
         for i in image:
-            [].append(executor.submit(taianh,i))
+            [].append(executor.submit(taianh,i,tentruyen))
     os.chdir(thumucgoc)
 input("Đã hoàn thành")
